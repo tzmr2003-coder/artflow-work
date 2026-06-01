@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artflow Pro | ניהול עסק</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&display=swap');
+        body { font-family: 'Heebo', sans-serif; background-color: #0f172a; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="text-white min-h-screen">
+
+    <!-- Header / Live Clock -->
+    <header class="p-6 flex justify-between items-center bg-slate-900 shadow-xl border-b border-slate-800">
+        <div>
+            <h1 class="text-2xl font-bold text-emerald-400">Artflow Pro</h1>
+            <p class="text-slate-400 text-xs">ניהול פרויקטים וצוותים</p>
+        </div>
+        <div id="live-clock" class="text-2xl font-mono font-bold tracking-widest bg-slate-800 px-4 py-2 rounded-xl border border-slate-700">00:00:00</div>
+    </header>
+
+    <main class="p-4 space-y-6">
+        <!-- KPI Dashboard -->
+        <section class="grid grid-cols-2 gap-4">
+            <div class="glass p-4 rounded-2xl">
+                <p class="text-slate-400 text-xs">הכנסה משוערת היום</p>
+                <h2 class="text-xl font-bold text-emerald-400">₪12,450</h2>
+            </div>
+            <div class="glass p-4 rounded-2xl">
+                <p class="text-slate-400 text-xs">משימות פתוחות</p>
+                <h2 class="text-xl font-bold text-white">08</h2>
+            </div>
+        </section>
+
+        <!-- Tasks Section -->
+        <section>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">עבודות לביצוע</h3>
+                <button onclick="alert('פתח טופס הוספה')" class="bg-emerald-600 px-3 py-1 rounded-lg text-sm font-bold">+ עבודה</button>
+            </div>
+            
+            <div id="tasks-container" class="space-y-4">
+                <!-- דוגמה לכרטיס עבודה (יוחלף ע"י הקוד) -->
+                <div class="glass p-4 rounded-2xl border-l-4 border-emerald-500">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold">שיפוץ דירה - הרצליה</h4>
+                        <span class="text-[10px] bg-emerald-900 text-emerald-300 px-2 py-1 rounded-full">פעיל</span>
+                    </div>
+                    <p class="text-slate-400 text-sm mb-3">רחוב הגיבורים 12</p>
+                    <div class="flex gap-2">
+                        <a href="waze://?q=רחוב הגיבורים 12" class="flex-1 bg-blue-600 text-center py-2 rounded-xl text-sm font-bold">Waze</a>
+                        <a href="tel:0500000000" class="flex-1 bg-slate-700 text-center py-2 rounded-xl text-sm font-bold">חיוג</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // חיבור לפיירבייס - הכנס כאן את המפתחות שלך מהפרויקט
+        const firebaseConfig = {
+            apiKey: "AIzaSyAuhjJZQOHtNMte5zKoki4eV2tE", 
+            authDomain: "artflow-74b9c.firebaseapp.com",
+            projectId: "artflow-74b9c",
+            databaseURL: "https://artflow-74b9c-default-rtdb.firebaseio.com/"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // שעון חי
+        setInterval(() => {
+            document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('he-IL');
+        }, 1000);
+    </script>
+</body>
+</html>
