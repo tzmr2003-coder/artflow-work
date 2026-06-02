@@ -2,79 +2,308 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Artflow Pro | ניהול עסק</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Artflow Pro Master</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&display=swap');
-        body { font-family: 'Heebo', sans-serif; background-color: #0f172a; }
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap');
+        
+        :root {
+            --neon-cyan: #06b6d4;
+            --neon-emerald: #10b981;
+            --premium-bg: linear-gradient(135deg, #090d16 0%, #111322 50%, #1a1528 100%);
+        }
+
+        body { 
+            font-family: 'Heebo', sans-serif; 
+            background: var(--premium-bg);
+            background-attachment: fixed;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* אפקט כרטיסיית זכוכית יוקרתית */
+        .premium-glass { 
+            background: rgba(22, 28, 45, 0.65); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.07); 
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        /* צבע זוהר ויוקרתי לטקסט */
+        .text-neon-gradient {
+            background: linear-gradient(135deg, #4ade80 0%, #06b6d4 50%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* מראה כפתור לחיץ ייחודי */
+        .btn-active-effect:active {
+            transform: scale(0.95);
+            filter: brightness(1.2);
+        }
+
+        /* מעברי מסכים חלקים */
+        .app-page { display: none; }
+        .app-page.active { display: block; animation: fadeIn 0.4s ease-out forwards; }
+        .modal { display: none; opacity: 0; transition: all 0.3s ease; }
+        .modal.active { display: flex; opacity: 1; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* סרגל גלילה מעוצב */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); rounded: 10px; }
     </style>
 </head>
-<body class="text-white min-h-screen">
+<body class="text-slate-100 min-h-screen pb-28 select-none">
 
-    <!-- Header / Live Clock -->
-    <header class="p-6 flex justify-between items-center bg-slate-900 shadow-xl border-b border-slate-800">
+    <header class="p-5 flex justify-between items-center premium-glass sticky top-0 z-40 border-b border-white/5 rounded-b-[2rem] shadow-[0_10px_30px_rgba(0,0,0,0.3)]">
         <div>
-            <h1 class="text-2xl font-bold text-emerald-400">Artflow Pro</h1>
-            <p class="text-slate-400 text-xs">ניהול פרויקטים וצוותים</p>
+            <h1 class="text-3xl font-black text-neon-gradient tracking-tight">Artflow Pro</h1>
+            <p class="text-slate-400 text-xs font-medium tracking-wide mt-0.5">מערכת ניהול ובקרה מתקדמת</p>
         </div>
-        <div id="live-clock" class="text-2xl font-mono font-bold tracking-widest bg-slate-800 px-4 py-2 rounded-xl border border-slate-700">00:00:00</div>
+        <div id="live-clock" class="text-lg font-mono font-bold bg-black/40 px-4 py-2 rounded-2xl border border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+            00:00:00
+        </div>
     </header>
 
-    <main class="p-4 space-y-6">
-        <!-- KPI Dashboard -->
+    <div id="page-dashboard" class="app-page active p-4 space-y-6">
+        
         <section class="grid grid-cols-2 gap-4">
-            <div class="glass p-4 rounded-2xl">
-                <p class="text-slate-400 text-xs">הכנסה משוערת היום</p>
-                <h2 class="text-xl font-bold text-emerald-400">₪12,450</h2>
+            <div class="premium-glass p-5 rounded-[1.75rem] relative overflow-hidden border-r-4 border-emerald-500">
+                <p class="text-slate-400 text-xs font-semibold mb-1">צפי הכנסה יומי</p>
+                <h2 id="total-money" class="text-2xl font-black text-emerald-400 drop-shadow-[0_2px_8px_rgba(16,185,129,0.3)]">₪0</h2>
             </div>
-            <div class="glass p-4 rounded-2xl">
-                <p class="text-slate-400 text-xs">משימות פתוחות</p>
-                <h2 class="text-xl font-bold text-white">08</h2>
+            <div class="premium-glass p-5 rounded-[1.75rem] relative overflow-hidden border-r-4 border-cyan-500">
+                <p class="text-slate-400 text-xs font-semibold mb-1">פרויקטים פעילים</p>
+                <h2 id="total-tasks" class="text-2xl font-black text-cyan-400 drop-shadow-[0_2px_8px_rgba(6,182,212,0.3)]">0</h2>
             </div>
         </section>
 
-        <!-- Tasks Section -->
-        <section>
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold">עבודות לביצוע</h3>
-                <button onclick="alert('פתח טופס הוספה')" class="bg-emerald-600 px-3 py-1 rounded-lg text-sm font-bold">+ עבודה</button>
+        <section class="space-y-4">
+            <div class="flex justify-between items-center px-1">
+                <h3 class="text-lg font-bold tracking-wide flex items-center gap-2">
+                    <span class="w-2.5 h-5 bg-indigo-500 rounded-full"></span>
+                    משימות עבודה להיום
+                </h3>
             </div>
-            
             <div id="tasks-container" class="space-y-4">
-                <!-- דוגמה לכרטיס עבודה (יוחלף ע"י הקוד) -->
-                <div class="glass p-4 rounded-2xl border-l-4 border-emerald-500">
-                    <div class="flex justify-between items-start mb-2">
-                        <h4 class="font-bold">שיפוץ דירה - הרצליה</h4>
-                        <span class="text-[10px] bg-emerald-900 text-emerald-300 px-2 py-1 rounded-full">פעיל</span>
-                    </div>
-                    <p class="text-slate-400 text-sm mb-3">רחוב הגיבורים 12</p>
-                    <div class="flex gap-2">
-                        <a href="waze://?q=רחוב הגיבורים 12" class="flex-1 bg-blue-600 text-center py-2 rounded-xl text-sm font-bold">Waze</a>
-                        <a href="tel:0500000000" class="flex-1 bg-slate-700 text-center py-2 rounded-xl text-sm font-bold">חיוג</a>
-                    </div>
+                <div id="loading-status" class="text-center py-12 text-slate-400 font-medium animate-pulse">
+                    טוען את נתוני העסק...
                 </div>
             </div>
         </section>
-    </main>
+    </div>
+
+    <div id="page-workers" class="app-page p-4 space-y-4">
+        <h3 class="text-xl font-bold tracking-wide px-1 flex items-center gap-2">
+            <span class="w-2.5 h-5 bg-amber-500 rounded-full"></span>
+            סטטוס צוותים בשטח
+        </h3>
+        <div id="workers-container" class="space-y-4">
+            </div>
+    </div>
+
+    <nav class="fixed bottom-0 left-0 right-0 premium-glass border-t border-white/10 rounded-t-[2.5rem] z-40 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+        <div class="flex justify-around items-center p-3 max-w-lg mx-auto relative">
+            
+            <button onclick="switchPage('dashboard')" id="nav-dashboard" class="flex flex-col items-center gap-1 py-1 px-4 rounded-xl text-cyan-400 font-bold btn-active-effect">
+                <span class="text-2xl">📋</span>
+                <span class="text-[11px]">פרויקטים</span>
+            </button>
+            
+            <button onclick="toggleModal(true)" class="bg-gradient-to-tr from-emerald-400 to-cyan-500 text-slate-950 font-black p-5 rounded-full shadow-[0_0_25px_rgba(6,182,212,0.4)] border-[6px] border-[#090d16] -top-8 relative transition-transform btn-active-effect">
+                <span class="text-2xl block w-6 h-6 flex items-center justify-center">+</span>
+            </button>
+
+            <button onclick="switchPage('workers')" id="nav-workers" class="flex flex-col items-center gap-1 py-1 px-4 rounded-xl text-slate-400 font-medium btn-active-effect">
+                <span class="text-2xl">👷</span>
+                <span class="text-[11px]">עובדים</span>
+            </button>
+        </div>
+    </nav>
+
+    <div id="work-modal" class="modal fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 items-center justify-center p-4">
+        <div class="premium-glass w-full max-w-md rounded-[2.5rem] p-6 space-y-4 border border-white/10 overflow-y-auto max-h-[88vh] shadow-2xl">
+            <div class="flex justify-between items-center border-b border-white/5 pb-3">
+                <h3 class="text-xl font-bold text-neon-gradient">הוספת פרויקט חדש</h3>
+                <button onclick="toggleModal(false)" class="bg-white/10 text-white w-9 h-9 rounded-full font-bold flex items-center justify-center hover:bg-rose-500/30 transition-colors btn-active-effect">&times;</button>
+            </div>
+
+            <form id="job-form" class="space-y-4 text-sm" onsubmit="saveJob(event)">
+                <div class="space-y-3">
+                    <label class="text-xs font-bold text-slate-400 block px-1">פרטי לקוח ופרויקט</label>
+                    <input type="text" id="form-client" placeholder="שם הלקוח / הפרויקט *" required class="w-full bg-slate-900/60 border border-white/5 rounded-2xl p-3.5 text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500">
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="text" id="form-type" placeholder="סוג עבודה *" required class="w-full bg-slate-900/60 border border-white/5 rounded-2xl p-3.5 text-white focus:outline-none focus:border-cyan-500">
+                        <input type="number" id="form-price" placeholder="מחיר לסגירה ₪ *" required class="w-full bg-slate-900/60 border border-white/5 rounded-2xl p-3.5 text-emerald-400 font-bold focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <label class="text-xs font-bold text-slate-400 block px-1">מיקום ותקשורת</label>
+                    <input type="text" id="form-address" placeholder="כתובת מדויקת לוויז *" required class="w-full bg-slate-800/60 border border-white/5 rounded-2xl p-3.5 text-white focus:outline-none focus:border-indigo-500">
+                    <input type="tel" id="form-phone" placeholder="מספר טלפון ליצירת קשר" class="w-full bg-slate-800/60 border border-white/5 rounded-2xl p-3.5 text-white focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div class="space-y-3">
+                    <label class="text-xs font-bold text-slate-400 block px-1">ניהול כוח אדם וחומרים</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="text" id="form-worker" placeholder="שם מנהל עבודה / פועל" class="w-full bg-slate-800/60 border border-white/5 rounded-2xl p-3.5 text-amber-300 focus:outline-none focus:border-amber-500">
+                        <input type="number" id="form-count" placeholder="כמות עובדים" min="1" class="w-full bg-slate-800/60 border border-white/5 rounded-2xl p-3.5 text-white focus:outline-none focus:border-amber-500">
+                    </div>
+                    <textarea id="form-materials" rows="2" placeholder="רשימת חומרים וציוד נדרש לשטח..." class="w-full bg-slate-800/60 border border-white/5 rounded-2xl p-3.5 text-white focus:outline-none focus:border-cyan-500 resize-none"></textarea>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 py-4 rounded-2xl font-black text-base shadow-xl shadow-cyan-500/10 transition-all btn-active-effect">
+                    שגר פרויקט למערכת
+                </button>
+            </form>
+        </div>
+    </div>
 
     <script>
-        // חיבור לפיירבייס - הכנס כאן את המפתחות שלך מהפרויקט
+        // קונפיגורציית Firebase הרשמית והמאובטחת שלך
         const firebaseConfig = {
-            apiKey: "AIzaSyAuhjJZQOHtNMte5zKoki4eV2tE", 
+            apiKey: "AIzaSyAuhjJZQOHtNMte5zKoki4eV2tE",
             authDomain: "artflow-74b9c.firebaseapp.com",
             projectId: "artflow-74b9c",
             databaseURL: "https://artflow-74b9c-default-rtdb.firebaseio.com/"
         };
+        
         firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        // שעון חי
-        setInterval(() => {
-            document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('he-IL');
+        // שעון דיגיטלי חי
+        setInterval(() => { 
+            document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('he-IL'); 
         }, 1000);
+
+        // מעבר חלק ומעוצב בין דפי האפליקציה
+        function switchPage(pageId) {
+            document.querySelectorAll('.app-page').forEach(page => page.classList.remove('active'));
+            document.getElementById(`page-${pageId}`).classList.add('active');
+            
+            // עדכון המראה של כפתורי הניווט
+            document.getElementById('nav-dashboard').className = pageId === 'dashboard' ? 'flex flex-col items-center gap-1 py-1 px-4 rounded-xl text-cyan-400 font-bold btn-active-effect' : 'flex flex-col items-center gap-1 py-1 px-4 rounded-xl text-slate-400 font-medium btn-active-effect';
+            document.getElementById('nav-workers').className = pageId === 'workers' ? 'flex flex-col items-center gap-1 py-1 px-4 rounded-xl text-amber-400 font-bold btn-active-effect' : 'flex flex-col items-center gap-1 py-1 px-4 rounded-xl text-slate-400 font-medium btn-active-effect';
+        }
+
+        function toggleModal(show) { 
+            const m = document.getElementById('work-modal'); 
+            if(show) m.classList.add('active'); 
+            else { m.classList.remove('active'); document.getElementById('job-form').reset(); } 
+        }
+        
+        // שליחת נתונים בטוחה למסד הנתונים
+        function saveJob(e) {
+            e.preventDefault();
+            const newJob = {
+                client: document.getElementById('form-client').value,
+                type: document.getElementById('form-type').value,
+                price: parseFloat(document.getElementById('form-price').value) || 0,
+                address: document.getElementById('form-address').value,
+                phone: document.getElementById('form-phone').value || '',
+                worker: document.getElementById('form-worker').value || 'לא שובץ',
+                count: document.getElementById('form-count').value || '1',
+                materials: document.getElementById('form-materials').value || 'אין'
+            };
+            db.ref('jobs').push(newJob).then(() => toggleModal(false));
+        }
+
+        // מחיקת פרויקט עם אישור מובנה למניעת טעויות
+        function deleteJob(id) { 
+            if(confirm('האם אתה בטוח שברצונך למחוק את הפרויקט לצמיתות מהמערכת?')) {
+                db.ref(`jobs/${id}`).remove(); 
+            }
+        }
+
+        // האזנה וסנכרון נתונים מהיר בזמן אמת
+        db.ref('jobs').on('value', (snapshot) => {
+            const container = document.getElementById('tasks-container');
+            const workersContainer = document.getElementById('workers-container');
+            container.innerHTML = '';
+            workersContainer.innerHTML = '';
+            
+            let totalMoney = 0; 
+            let jobCount = 0; 
+            const data = snapshot.val();
+
+            if (!data) {
+                container.innerHTML = `
+                    <div class="premium-glass p-10 rounded-[2rem] text-center border-dashed border border-slate-700">
+                        <div class="text-4xl mb-3">💼</div>
+                        <h4 class="text-lg font-bold text-white mb-1">אין פרויקטים פעילים</h4>
+                        <p class="text-slate-400 text-xs">לחץ על כפתור ה- <strong class="text-cyan-400">+</strong> למטה כדי להוסיף עבודה ראשונה.</p>
+                    </div>`;
+                workersContainer.innerHTML = `<div class="premium-glass p-8 rounded-[2rem] text-center text-slate-400 text-sm">אין צוותים משובצים בשטח כרגע.</div>`;
+                document.getElementById('total-money').innerText = "₪0"; 
+                document.getElementById('total-tasks').innerText = "0"; 
+                return;
+            }
+
+            // יצירת הכרטיסיות
+            Object.keys(data).forEach(id => {
+                const job = data[id]; 
+                totalMoney += job.price; 
+                jobCount++;
+
+                // 1. כרטיסיית פרויקט מעוצבת
+                const card = document.createElement('div');
+                card.className = "premium-glass p-5 rounded-[2rem] border-r-4 border-cyan-400 flex flex-col space-y-4 shadow-md";
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <span class="inline-block bg-cyan-500/10 text-cyan-400 text-[11px] font-bold px-3 py-0.5 rounded-full border border-cyan-500/20 mb-1.5">${job.type}</span>
+                            <h4 class="text-xl font-bold text-white leading-tight">${job.client}</h4>
+                        </div>
+                        <div class="bg-emerald-500/10 px-3 py-1.5 rounded-2xl border border-emerald-500/20">
+                            <span class="text-md font-black text-emerald-400">₪${job.price.toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <div class="bg-black/20 p-3.5 rounded-2xl border border-white/5 text-xs space-y-2">
+                        <div class="flex justify-between"><span class="text-slate-400">👷 מנהל/צוות משובץ:</span><strong class="text-amber-400 font-semibold">${job.worker} (${job.count} איש)</strong></div>
+                        ${job.materials !== 'אין' ? `<div class="pt-2 border-t border-white/5"><span class="text-slate-400 block mb-1">🧱 ציוד וחומרים לשטח:</span><span class="text-slate-200 font-medium">${job.materials}</span></div>` : ''}
+                    </div>
+                    <div class="flex gap-2.5 pt-1 text-xs">
+                        <a href="waze://?q=${encodeURIComponent(job.address)}" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-center py-3 rounded-xl font-bold btn-active-effect flex items-center justify-center gap-1 shadow-md">🚙 ניווט Waze</a>
+                        ${job.phone ? `<a href="tel:${job.phone}" class="flex-1 bg-gradient-to-r from-orange-500 to-rose-600 text-white text-center py-3 rounded-xl font-bold btn-active-effect flex items-center justify-center gap-1 shadow-md">📞 חיוג מהיר</a>` : ''}
+                        <button onclick="deleteJob('${id}')" class="bg-slate-900 border border-white/10 text-rose-400 px-4 rounded-xl text-base btn-active-effect">✖</button>
+                    </div>`;
+                container.appendChild(card);
+
+                // 2. כרטיסיית עובד בדף נפרד
+                const workerCard = document.createElement('div');
+                workerCard.className = "premium-glass p-4 rounded-2xl flex justify-between items-center border-l-4 border-amber-400";
+                workerCard.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="text-2xl bg-amber-500/10 p-2 rounded-xl">👷</div>
+                        <div>
+                            <h4 class="font-bold text-white">${job.worker}</h4>
+                            <p class="text-slate-400 text-xs">פרויקט: ${job.client} (${job.count} עובדים בשטח)</p>
+                        </div>
+                    </div>
+                    <span class="bg-amber-500/10 text-amber-400 text-xs px-2.5 py-1 rounded-full border border-amber-400/20 font-bold">פעיל בשטח</span>
+                `;
+                workersContainer.appendChild(workerCard);
+            });
+
+            // עדכון מונים בראש העמוד
+            document.getElementById('total-money').innerText = `₪${totalMoney.toLocaleString()}`;
+            document.getElementById('total-tasks').innerText = jobCount;
+        });
     </script>
 </body>
 </html>
