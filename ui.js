@@ -1,5 +1,5 @@
-// ARTFLOW ENTERPRISE - UI ENGINE - V3.0
-// COMPLETE SYSTEM INTERFACE WITH MULTI-MODULE INTEGRATION
+// ARTFLOW ENTERPRISE - UI ENGINE - V3.5
+// COMPLETE SYSTEM INTERFACE WITH MULTI-MODULE INTEGRATION & INTEGRATED TASKS PANEL
 
 window.ui = {
     // רינדור המבנה הבסיסי והתפריט הראשי של האפליקציה
@@ -8,22 +8,26 @@ window.ui = {
         root.innerHTML = `
             <div class="space-y-6 max-w-2xl mx-auto pb-16">
                 
-                <div class="grid grid-cols-4 gap-2 mb-4">
-                    <button id="btn-tab-projects" onclick="ui.switchTab('projects')" class="p-3 rounded-2xl glass-panel text-center border-gold/20 transition-all duration-200">
-                        <div class="text-xl mb-1">🏗️</div>
-                        <div class="text-[10px] font-bold text-slate-300">פרויקטים</div>
+                <div class="grid grid-cols-5 gap-1.5 mb-4">
+                    <button id="btn-tab-projects" onclick="ui.switchTab('projects')" class="p-2.5 rounded-xl glass-panel text-center border-gold/20 transition-all duration-200">
+                        <div class="text-lg mb-1">🏗️</div>
+                        <div class="text-[9px] font-bold text-slate-300">פרויקטים</div>
                     </button>
-                    <button id="btn-tab-attendance" onclick="ui.switchTab('attendance')" class="p-3 rounded-2xl glass-panel text-center border-gold/20 transition-all duration-200">
-                        <div class="text-xl mb-1">👷</div>
-                        <div class="text-[10px] font-bold text-slate-300">נוכחות</div>
+                    <button id="btn-tab-tasks" onclick="ui.switchTab('tasks')" class="p-2.5 rounded-xl glass-panel text-center border-gold/20 transition-all duration-200">
+                        <div class="text-lg mb-1">📋</div>
+                        <div class="text-[9px] font-bold text-slate-300">משימות</div>
                     </button>
-                    <button id="btn-tab-finance" onclick="ui.switchTab('finance')" class="p-3 rounded-2xl glass-panel text-center border-gold/20 transition-all duration-200">
-                        <div class="text-xl mb-1">💰</div>
-                        <div class="text-[10px] font-bold text-slate-300">כספים</div>
+                    <button id="btn-tab-attendance" onclick="ui.switchTab('attendance')" class="p-2.5 rounded-xl glass-panel text-center border-gold/20 transition-all duration-200">
+                        <div class="text-lg mb-1">👷</div>
+                        <div class="text-[9px] font-bold text-slate-300">נוכחות</div>
                     </button>
-                    <button id="btn-tab-navigation" onclick="ui.switchTab('navigation')" class="p-3 rounded-2xl glass-panel text-center border-gold/20 transition-all duration-200">
-                        <div class="text-xl mb-1">📍</div>
-                        <div class="text-[10px] font-bold text-slate-300">ניווט</div>
+                    <button id="btn-tab-finance" onclick="ui.switchTab('finance')" class="p-2.5 rounded-xl glass-panel text-center border-gold/20 transition-all duration-200">
+                        <div class="text-lg mb-1">💰</div>
+                        <div class="text-[9px] font-bold text-slate-300">כספים</div>
+                    </button>
+                    <button id="btn-tab-navigation" onclick="ui.switchTab('navigation')" class="p-2.5 rounded-xl glass-panel text-center border-gold/20 transition-all duration-200">
+                        <div class="text-lg mb-1">📍</div>
+                        <div class="text-[9px] font-bold text-slate-300">ניווט</div>
                     </button>
                 </div>
 
@@ -58,7 +62,7 @@ window.ui = {
         if (!container) return;
 
         // איפוס והדגשת הכפתור הפעיל בתפריט
-        ['projects', 'attendance', 'finance', 'navigation'].forEach(t => {
+        ['projects', 'tasks', 'attendance', 'finance', 'navigation'].forEach(t => {
             const btn = document.getElementById(`btn-tab-${t}`);
             if (btn) {
                 btn.classList.remove('border-gold', 'bg-gold/10');
@@ -92,6 +96,14 @@ window.ui = {
             `;
             ui.loadProjectsList();
         } 
+        
+        else if (tabName === 'tasks') {
+            if (window.tasks && typeof window.tasks.renderView === 'function') {
+                window.tasks.renderView();
+            } else {
+                container.innerHTML = `<div class="text-xs text-rose-400 p-4 text-center">מודול משימות לא נטען כראוי</div>`;
+            }
+        }
         
         else if (tabName === 'attendance') {
             container.innerHTML = `
