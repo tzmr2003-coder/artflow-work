@@ -1,5 +1,5 @@
-// ARTFLOW ENTERPRISE - UI ENGINE - V4.0
-// COMPLETE SYSTEM INTERFACE WITH MULTI-MODULE INTEGRATION - PART 1
+// ARTFLOW ENTERPRISE - UI ENGINE - V4.5
+// COMPLETE SYSTEM INTERFACE WITH LIVE ENTRY DELETION - PART 1
 
 window.ui = {
     // רינדור המבנה הבסיסי והתפריט הראשי של האפליקציה עם 6 טאבים מובנים
@@ -67,7 +67,6 @@ window.ui = {
         const container = document.getElementById('dynamic-view');
         if (!container) return;
 
-        // איפוס והדגשת הכפתור הפעיל בתפריט המורחב
         ['projects', 'tasks', 'attendance', 'reports', 'finance', 'navigation'].forEach(t => {
             const btn = document.getElementById(`btn-tab-${t}`);
             if (btn) {
@@ -81,14 +80,13 @@ window.ui = {
             activeBtn.classList.add('border-gold', 'bg-gold/10');
         }
 
-        // טעינת מודול דף פרויקטים
         if (tabName === 'projects') {
             container.innerHTML = `
                 <div class="glass-panel p-5 rounded-3xl border border-gold/20 shadow-lg">
                     <h3 class="text-md font-bold text-gold mb-4 uppercase tracking-wider">רישום ועדכון פרויקט</h3>
                     <div class="space-y-3">
                         <input id="p-client" placeholder="שם הלקוח / חברה" class="w-full bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 text-white placeholder-slate-500 text-sm focus:border-gold outline-none transition-all">
-                        <input id="p-type" placeholder="סוג העבודה (גבס, צבע, אינסטלציה...)" class="w-full bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 text-white placeholder-slate-500 text-sm focus:border-gold outline-none transition-all">
+                        <input id="p-type" placeholder="סוג העבודה" class="w-full bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 text-white placeholder-slate-500 text-sm focus:border-gold outline-none transition-all">
                         <input id="p-address" placeholder="כתובת האתר מלאה" class="w-full bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 text-white placeholder-slate-500 text-sm focus:border-gold outline-none transition-all">
                         <input id="p-price" type="number" placeholder="סכום הפרויקט בש"ח" class="w-full bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 text-white placeholder-slate-500 text-sm focus:border-gold outline-none transition-all">
                         <input id="p-worker" placeholder="שם מנהל עבודה / עובד אחראי" class="w-full bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 text-white placeholder-slate-500 text-sm focus:border-gold outline-none transition-all">
@@ -102,25 +100,17 @@ window.ui = {
             `;
             ui.loadProjectsList();
         } 
-        
-        // טעינת מודול דף משימות
         else if (tabName === 'tasks') {
             if (window.tasks && typeof window.tasks.renderView === 'function') {
                 window.tasks.renderView();
-            } else {
-                container.innerHTML = `<div class="text-xs text-rose-400 p-4 text-center">מודול משימות לא נטען כראוי</div>`;
             }
-        }
-        
-        // טעינת מודול דף דוחות שעות נוכחות
+        } 
         else if (tabName === 'reports') {
             if (window.reports && typeof window.reports.renderView === 'function') {
                 window.reports.renderView();
-            } else {
-                container.innerHTML = `<div class="text-xs text-rose-400 p-4 text-center">מודול דוחות שעות לא נטען כראוי</div>`;
             }
         }
-        // טעינת מודול דף נוכחות עובדים
+        // טעינת מודול דף נוכחות עובדים עם כפתור מחיקה מובנה
         else if (tabName === 'attendance') {
             container.innerHTML = `
                 <div class="glass-panel p-5 rounded-3xl border border-blue-500/20 shadow-lg">
@@ -247,7 +237,7 @@ window.ui = {
         });
     },
 
-    // טעינה ורענון יומן הנוכחות
+    // טעינה ורענון יומן הנוכחות עם הוספת כפתור מחיקה מהיר לכל דיווח
     loadAttendanceList: () => {
         window.logic.getData('attendance', (data) => {
             const listContainer = document.getElementById('ui-attendance-list');
@@ -265,9 +255,12 @@ window.ui = {
                         <span class="${a.action === 'כניסה' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'} px-2 py-0.5 rounded-md font-bold text-[10px]">${a.action}</span>
                         <span class="text-slate-200 font-bold">${a.name}</span>
                     </div>
-                    <div class="text-left flex flex-col items-end">
-                        <span class="text-slate-400 font-medium">${a.time}</span>
-                        <span class="text-[10px] text-slate-500 mt-0.5">${a.location !== 'לא הוגדר' ? a.location : ''}</span>
+                    <div class="text-left flex items-center gap-4">
+                        <div class="flex flex-col items-end">
+                            <span class="text-slate-400 font-medium">${a.time}</span>
+                            <span class="text-[10px] text-slate-500 mt-0.5">${a.location !== 'לא הוגדר' ? a.location : ''}</span>
+                        </div>
+                        <button onclick="if(confirm('למחוק פעימת נוכחות זו?')) window.logic.deleteEntry('attendance', '${id}')" class="text-rose-500 font-bold text-xs hover:underline bg-rose-500/5 p-1.5 rounded-md">מחק</button>
                     </div>
                 </div>
             `).join('');
