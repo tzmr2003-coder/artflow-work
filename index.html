@@ -4,36 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artflow Enterprise System</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
     <link rel="manifest" href="manifest.json">
+    
     <style>
-        :root { --gold: #C0843C; --dark: #0f172a; }
-        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
+        :root { 
+            --gold: #C0843C; 
+            --dark: #0f172a; 
+        }
+        body { 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; 
+        }
+        .glass-panel { 
+            background: rgba(30, 41, 59, 0.7); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+        }
         .text-gold { color: var(--gold); }
         .bg-gold { background-color: var(--gold); }
         .border-gold { border-color: var(--gold); }
-        body { font-family: sans-serif; }
+        
+        /* עיצוב פס גלילה מותאם */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(192, 132, 60, 0.3); border-radius: 10px; }
     </style>
 </head>
-<body class="h-full text-slate-200">
+<body class="h-full text-slate-200 antialiased overflow-hidden select-none">
 
-    <div id="app" class="h-full flex flex-col max-w-lg mx-auto overflow-hidden shadow-2xl">
-        <header class="p-6 glass-panel border-b border-gold/30 flex justify-between items-center">
-            <h1 class="text-2xl font-black tracking-widest text-gold">ARTFLOW_CORE</h1>
-            <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+    <div id="app" class="h-full flex flex-col max-w-lg mx-auto bg-slate-950 relative border-x border-slate-900 shadow-2xl">
+        
+        <header class="p-5 glass-panel border-b border-gold/20 flex justify-between items-center z-50">
+            <div>
+                <h1 class="text-2xl font-black tracking-widest text-gold m-0 p-0 leading-none">ARTFLOW</h1>
+                <span class="text-[9px] text-slate-500 uppercase tracking-[0.3em] mt-1 block">Management Suite</span>
+            </div>
+            <div class="flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-800">
+                <div id="status-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span class="text-[11px] font-bold text-slate-400">LIVE</span>
+            </div>
         </header>
 
-        <main id="main-content" class="flex-1 p-6 overflow-y-auto">
-            <div class="flex items-center justify-center h-full text-slate-500">
-                טוען מודולים ומערכות...
+        <main id="main-content" class="flex-1 p-5 overflow-y-auto space-y-6 pb-24">
+            <div class="flex flex-col items-center justify-center h-full text-slate-500 space-y-3">
+                <div class="w-8 h-8 border-4 border-gold/30 border-t-gold rounded-full animate-spin"></div>
+                <div class="text-xs tracking-wider uppercase">טוען ארכיטקטורת מערכת...</div>
             </div>
         </main>
 
-        <footer class="p-4 glass-panel border-t border-gold/30">
-            <div class="text-center text-[10px] uppercase tracking-widest text-slate-500">
-                Enterprise Management System v2.1
+        <footer class="p-3 glass-panel border-t border-slate-900 absolute bottom-0 left-0 right-0 z-50">
+            <div class="text-center text-[9px] uppercase tracking-[0.4em] text-slate-500">
+                Artflow Pro v3.0 Core Engine
             </div>
         </footer>
     </div>
@@ -41,6 +67,7 @@
     <script src="config.js"></script>
     <script src="logic.js"></script>
     <script src="ui.js"></script>
+    
     <script src="waze.js"></script>
 </body>
 </html>
