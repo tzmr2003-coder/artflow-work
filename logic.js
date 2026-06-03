@@ -1,9 +1,9 @@
-// ARTFLOW ENTERPRISE - LOGIC ENGINE - V2.1
-// COMPLETE DATABASE & BUSINESS LOGIC MODULE
+// ARTFLOW ENTERPRISE - CENTRAL LOGIC ENGINE - V3.0
+// מודול ניהול ותיאום נתונים עסקיים מול מסד הנתונים
 
 window.logic = {
     
-    // 1. PROJECT MANAGEMENT
+    // 1. שמירת פרויקט חדש במערכת
     addProject: (client, type, address, price, worker) => {
         const projectData = {
             client: client || "לא צוין",
@@ -18,7 +18,7 @@ window.logic = {
         return window.db.ref('projects').push(projectData);
     },
 
-    // 2. ATTENDANCE SYSTEM
+    // 2. רישום נוכחות עובדים יומי
     recordAttendance: (workerName, action, location) => {
         const attendanceData = {
             name: workerName,
@@ -30,43 +30,24 @@ window.logic = {
         return window.db.ref('attendance').push(attendanceData);
     },
 
-    // 3. FINANCIAL REPORTING
+    // 3. מנוע כספים - חישוב מחזור הכנסות כולל
     calculateRevenue: (projectsList) => {
         if (!projectsList) return 0;
         return Object.values(projectsList).reduce((total, p) => total + (parseFloat(p.price) || 0), 0);
     },
 
-    // 4. NAVIGATION ENGINE
-    openWaze: (address) => {
-        if (!address) return;
-        const encodedAddress = encodeURIComponent(address);
-        const wazeUrl = `https://waze.com/ul?q=${encodedAddress}&navigate=yes`;
-        window.open(wazeUrl, '_blank');
-    },
-
-    // 5. MAINTENANCE & DATA HANDLING
+    // 4. מחיקת רשומה גנרית מכל נתיב במסד הנתונים
     deleteEntry: (category, entryId) => {
-        if (!category || !entryId) return;
+        if (!category || !entryId) return Promise.reject("נתונים חסרים למחיקה");
         return window.db.ref(`${category}/${entryId}`).remove();
     },
 
+    // 5. האזנה שוטפת וסנכרון נתונים בזמן אמת
     getData: (path, callback) => {
         window.db.ref(path).on('value', (snapshot) => {
             callback(snapshot.val() || {});
         });
-    },
-
-    // 6. ADVANCED AGGREGATION
-    getWorkerHours: (attendanceList, workerName) => {
-        if (!attendanceList) return 0;
-        return Object.values(attendanceList).filter(a => a.name === workerName).length;
-    },
-
-    // 7. PROJECT FILTERING
-    getActiveProjects: (projectsList) => {
-        if (!projectsList) return [];
-        return Object.values(projectsList).filter(p => p.status === "active");
     }
 };
 
-console.log("Artflow Logic Engine V2.1 Initialized.");
+console.log("Artflow Central Logic Engine V3.0 Loaded.");
