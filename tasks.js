@@ -1,5 +1,5 @@
-// ARTFLOW ENTERPRISE - TASKS MODULE - V3.0
-// מודול ייעודי לניהול, מעקב והקצאת משימות לצוות העובדים
+// ARTFLOW ENTERPRISE - TASKS MODULE - V3.1
+// מודול ייעודי לניהול, מעקב והקצאת משימות לצוות העובדים עם מחיקה מובנית
 
 window.tasks = {
     // 1. שמירת משימה חדשה במסד הנתונים
@@ -14,7 +14,7 @@ window.tasks = {
             description: description.trim() || "אין פירוט",
             worker: assignedWorker || "ללא שיוך",
             deadline: deadline || "לא נקבע",
-            status: "open", // open, completed
+            status: "open", 
             timestamp: Date.now(),
             date: new Date().toLocaleDateString('he-IL')
         };
@@ -30,8 +30,13 @@ window.tasks = {
 
     // 3. מחיקת משימה לחלוטין מהמערכת
     deleteTask: (taskId) => {
-        if (!taskId) return Promise.reject("מזהה משימה חסר");
-        return window.db.ref(`tasks/${taskId}`).remove();
+        if (!taskId) return;
+        if (confirm("האם אתה בטוח שברצונך למחוק משימה זו?")) {
+            window.db.ref(`tasks/${taskId}`).remove().then(() => {
+                alert("המשימה נמחקה בהצלחה");
+                window.tasks.renderView();
+            }).catch(err => alert("שגיאה במחיקה: " + err));
+        }
     },
 
     // 4. רינדור (הצגת) מסך המשימות בתוך ה-UI הדינמי
@@ -91,7 +96,7 @@ window.tasks = {
                             <h4 class="font-bold text-white text-sm">${t.title}</h4>
                             <p class="text-xs text-slate-400 mt-1">${t.description}</p>
                         </div>
-                        <div class="flex gap-2">
+                        <div class="flex gap-2 text-left">
                             <button onclick="window.tasks.toggleTaskStatus('${id}', '${t.status}')" class="text-xs p-1.5 rounded-lg ${t.status === 'completed' ? 'bg-amber-500/10 text-amber-400' : 'bg-emerald-500/10 text-emerald-400'} font-bold">
                                 ${t.status === 'completed' ? 'פתח' : 'בצע'}
                             </button>
@@ -108,4 +113,4 @@ window.tasks = {
     }
 };
 
-console.log("Artflow Tasks Management Module V3.0 Loaded.");
+console.log("Artflow Tasks Management Module V3.1 Loaded.");
