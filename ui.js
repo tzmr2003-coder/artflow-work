@@ -1,37 +1,43 @@
-// ARTFLOW ENTERPRISE - UI ENGINE - V3.5
-// COMPLETE SYSTEM INTERFACE WITH MULTI-MODULE INTEGRATION & INTEGRATED TASKS PANEL
+// ARTFLOW ENTERPRISE - UI ENGINE - V4.0
+// COMPLETE SYSTEM INTERFACE WITH MULTI-MODULE INTEGRATION - PART 1
 
 window.ui = {
-    // רינדור המבנה הבסיסי והתפריט הראשי של האפליקציה
+    // רינדור המבנה הבסיסי והתפריט הראשי של האפליקציה עם 6 טאבים מובנים
     render: () => {
         const root = document.getElementById('main-content');
         root.innerHTML = `
             <div class="space-y-6 max-w-2xl mx-auto pb-16">
                 
-                <div class="grid grid-cols-5 gap-1.5 mb-4">
-                    <button id="btn-tab-projects" onclick="ui.switchTab('projects')" class="p-2.5 rounded-xl glass-panel text-center border-gold/20 transition-all duration-200">
-                        <div class="text-lg mb-1">🏗️</div>
-                        <div class="text-[9px] font-bold text-slate-300">פרויקטים</div>
+                <div class="grid grid-cols-3 gap-2 mb-2">
+                    <button id="btn-tab-projects" onclick="ui.switchTab('projects')" class="p-3 rounded-2xl glass-panel text-center border-gold/20 transition-all duration-200">
+                        <div class="text-xl mb-1">🏗️</div>
+                        <div class="text-[10px] font-bold text-slate-300">פרויקטים</div>
                     </button>
-                    <button id="btn-tab-tasks" onclick="ui.switchTab('tasks')" class="p-2.5 rounded-xl glass-panel text-center border-gold/20 transition-all duration-200">
-                        <div class="text-lg mb-1">📋</div>
-                        <div class="text-[9px] font-bold text-slate-300">משימות</div>
+                    <button id="btn-tab-tasks" onclick="ui.switchTab('tasks')" class="p-3 rounded-2xl glass-panel text-center border-gold/20 transition-all duration-200">
+                        <div class="text-xl mb-1">📋</div>
+                        <div class="text-[10px] font-bold text-slate-300">משימות</div>
                     </button>
-                    <button id="btn-tab-attendance" onclick="ui.switchTab('attendance')" class="p-2.5 rounded-xl glass-panel text-center border-gold/20 transition-all duration-200">
-                        <div class="text-lg mb-1">👷</div>
-                        <div class="text-[9px] font-bold text-slate-300">נוכחות</div>
+                    <button id="btn-tab-attendance" onclick="ui.switchTab('attendance')" class="p-3 rounded-2xl glass-panel text-center border-gold/20 transition-all duration-200">
+                        <div class="text-xl mb-1">👷</div>
+                        <div class="text-[10px] font-bold text-slate-300">נוכחות</div>
                     </button>
-                    <button id="btn-tab-finance" onclick="ui.switchTab('finance')" class="p-2.5 rounded-xl glass-panel text-center border-gold/20 transition-all duration-200">
-                        <div class="text-lg mb-1">💰</div>
-                        <div class="text-[9px] font-bold text-slate-300">כספים</div>
+                </div>
+                <div class="grid grid-cols-3 gap-2 mb-4">
+                    <button id="btn-tab-reports" onclick="ui.switchTab('reports')" class="p-3 rounded-2xl glass-panel text-center border-gold/20 transition-all duration-200">
+                        <div class="text-xl mb-1">📊</div>
+                        <div class="text-[10px] font-bold text-slate-300">דוחות שעות</div>
                     </button>
-                    <button id="btn-tab-navigation" onclick="ui.switchTab('navigation')" class="p-2.5 rounded-xl glass-panel text-center border-gold/20 transition-all duration-200">
-                        <div class="text-lg mb-1">📍</div>
-                        <div class="text-[9px] font-bold text-slate-300">ניווט</div>
+                    <button id="btn-tab-finance" onclick="ui.switchTab('finance')" class="p-3 rounded-2xl glass-panel text-center border-gold/20 transition-all duration-200">
+                        <div class="text-xl mb-1">💰</div>
+                        <div class="text-[10px] font-bold text-slate-300">כספים</div>
+                    </button>
+                    <button id="btn-tab-navigation" onclick="ui.switchTab('navigation')" class="p-3 rounded-2xl glass-panel text-center border-gold/20 transition-all duration-200">
+                        <div class="text-xl mb-1">📍</div>
+                        <div class="text-[10px] font-bold text-slate-300">ניווט</div>
                     </button>
                 </div>
 
-                <div id="dynamic-view" class="space-y-6 min-h-[300px]"></div>
+                <div id="dynamic-view" class="space-y-6 min-h-[320px]"></div>
 
                 <div class="glass-panel p-5 rounded-3xl border border-emerald-500/20 shadow-xl mt-6">
                     <div class="flex justify-between items-center mb-3">
@@ -56,13 +62,13 @@ window.ui = {
         ui.updateGlobalStats();
     },
 
-    // ניווט בין דפים ועדכון העיצוב של הכפתור שנבחר
+    // ניווט מובנה בין דפים ועדכון נראות כפתורי התפריט
     switchTab: (tabName) => {
         const container = document.getElementById('dynamic-view');
         if (!container) return;
 
-        // איפוס והדגשת הכפתור הפעיל בתפריט
-        ['projects', 'tasks', 'attendance', 'finance', 'navigation'].forEach(t => {
+        // איפוס והדגשת הכפתור הפעיל בתפריט המורחב
+        ['projects', 'tasks', 'attendance', 'reports', 'finance', 'navigation'].forEach(t => {
             const btn = document.getElementById(`btn-tab-${t}`);
             if (btn) {
                 btn.classList.remove('border-gold', 'bg-gold/10');
@@ -75,7 +81,7 @@ window.ui = {
             activeBtn.classList.add('border-gold', 'bg-gold/10');
         }
 
-        // טעינת הדף הרלוונטי
+        // טעינת מודול דף פרויקטים
         if (tabName === 'projects') {
             container.innerHTML = `
                 <div class="glass-panel p-5 rounded-3xl border border-gold/20 shadow-lg">
@@ -97,6 +103,7 @@ window.ui = {
             ui.loadProjectsList();
         } 
         
+        // טעינת מודול דף משימות
         else if (tabName === 'tasks') {
             if (window.tasks && typeof window.tasks.renderView === 'function') {
                 window.tasks.renderView();
@@ -105,6 +112,15 @@ window.ui = {
             }
         }
         
+        // טעינת מודול דף דוחות שעות נוכחות
+        else if (tabName === 'reports') {
+            if (window.reports && typeof window.reports.renderView === 'function') {
+                window.reports.renderView();
+            } else {
+                container.innerHTML = `<div class="text-xs text-rose-400 p-4 text-center">מודול דוחות שעות לא נטען כראוי</div>`;
+            }
+        }
+        // טעינת מודול דף נוכחות עובדים
         else if (tabName === 'attendance') {
             container.innerHTML = `
                 <div class="glass-panel p-5 rounded-3xl border border-blue-500/20 shadow-lg">
@@ -126,6 +142,7 @@ window.ui = {
             ui.loadAttendanceList();
         } 
         
+        // טעינת מודול דף כספים ודוחות הכנסה
         else if (tabName === 'finance') {
             container.innerHTML = `
                 <div class="glass-panel p-5 rounded-3xl border border-purple-500/20 shadow-lg">
@@ -145,6 +162,7 @@ window.ui = {
             ui.loadFinanceData();
         } 
         
+        // טעינת מודול מרכז ניווט
         else if (tabName === 'navigation') {
             container.innerHTML = `
                 <div class="glass-panel p-5 rounded-3xl border border-amber-500/20 shadow-lg">
@@ -221,7 +239,7 @@ window.ui = {
                         <div class="text-[10px] text-slate-500 mt-0.5">${p.address !== 'לא צוין' ? p.address : ''}</div>
                     </div>
                     <div class="text-left">
-                        <div class="text-sm font-black text-gold">${p.price.toLocaleString()} ₪</div>
+                        <div class="text-sm font-black text-gold">${parseFloat(p.price).toLocaleString()} ₪</div>
                         <button onclick="window.logic.deleteEntry('projects', '${id}')" class="text-[10px] text-rose-500/80 font-bold mt-1.5 inline-block hover:underline">מחיקה</button>
                     </div>
                 </div>
@@ -278,7 +296,7 @@ window.ui = {
                         <span class="text-slate-200 font-bold">${p.client}</span>
                         <span class="text-[10px] text-slate-500 mt-0.5">${p.type}</span>
                     </div>
-                    <span class="text-slate-100 font-black">${p.price.toLocaleString()} ₪</span>
+                    <span class="text-slate-100 font-black">${parseFloat(p.price).toLocaleString()} ₪</span>
                 </div>
             `).join('');
         });
